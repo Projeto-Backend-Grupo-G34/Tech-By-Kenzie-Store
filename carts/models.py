@@ -1,7 +1,7 @@
 from django.db import models
-
-# Create your models here.
+from users.models import User
 
 
 class Cart(models.Model):
-    ...
+    quantity = models.IntegerField()
+    total_price = models.IntegerField()

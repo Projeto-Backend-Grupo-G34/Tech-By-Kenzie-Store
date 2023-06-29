@@ -1,7 +1,7 @@
 from django.db import models
-
-# Create your models here.
+from users.models import User
 
 
 class Address(models.Model):
-    ...
+    street = models.CharField(max_length=150)
+    number = models.IntegerField()
