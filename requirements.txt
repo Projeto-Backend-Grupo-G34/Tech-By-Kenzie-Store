@@ -12,8 +12,10 @@ matplotlib-inline==0.1.6
 parso==0.8.3
 pickleshare==0.7.5
 prompt-toolkit==3.0.38
+psycopg2-binary==2.9.6
 pure-eval==0.2.2
 Pygments==2.15.1
+python-dotenv==1.0.0
 pytz==2023.3
 six==1.16.0
 sqlparse==0.4.4

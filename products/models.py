@@ -12,15 +12,15 @@ class Product(models.Model):
     user = models.ForeignKey(
         User,
         on_delete=models.PROTECT,
-        related_name="user"
+        related_name="product"
     )
 
     orders = models.ManyToManyField(
         Order,
-        related_name="orders",
+        related_name="product",
     )
 
     carts = models.ManyToManyField(
         Cart,
-        related_name="carts",
+        related_name="product",
     )
