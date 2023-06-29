@@ -13,11 +13,11 @@ class User(AbstractUser):
     address = models.OneToOneField(
         Address,
         on_delete=models.CASCADE,
-        related_name="address",
+        related_name="user",
     )
 
     cart = models.OneToOneField(
         Cart,
         on_delete=models.PROTECT,
-        related_name="cart"
+        related_name="user"
     )

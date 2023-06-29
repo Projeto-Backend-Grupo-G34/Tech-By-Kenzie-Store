@@ -17,5 +17,5 @@ class Order(models.Model):
     user = models.ForeignKey(
         User,
         on_delete=models.PROTECT,
-        related_name="user"
+        related_name="order"
     )
