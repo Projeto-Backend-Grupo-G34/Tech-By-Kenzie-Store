@@ -1,5 +1,4 @@
 from django.db import models
-from products.models import Product
 from users.models import User
 
 
@@ -10,7 +9,7 @@ class Status(models.TextChoices):
 
 
 class Order(models.Model):
-    status = models.CharField(
+    status = models.CharField(max_length=50, 
         choices=Status.choices, default=Status.EM_AMDAMENTO,
     )
     buyed_at = models.DateTimeField(auto_now_add=True)

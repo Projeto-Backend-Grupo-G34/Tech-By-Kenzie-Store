@@ -17,12 +17,10 @@ class Product(models.Model):
 
     orders = models.ManyToManyField(
         Order,
-        on_delete=models.CASCADE,
         related_name="orders",
     )
 
     carts = models.ManyToManyField(
         Cart,
-        on_delete=models.CASCADE,
         related_name="carts",
     )
