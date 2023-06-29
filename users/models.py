@@ -19,5 +19,5 @@ class User(AbstractUser):
     cart = models.OneToOneField(
         Cart,
         on_delete=models.PROTECT,
-        related_name="user"
+        related_name="cart"
     )
