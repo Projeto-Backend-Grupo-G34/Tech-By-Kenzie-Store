@@ -10,6 +10,3 @@ class AddressSerializer(serializers.ModelSerializer):
             "street"
             "number"
         ]
-
-    def create(self, validated_data: dict):
-        return Address.objects.create(**validated_data)

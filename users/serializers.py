@@ -6,12 +6,13 @@ from users.models import User
 
 class UserSerializer(serializers.ModelSerializer):
     address = AddressSerializer(read_only=True)
+
     class Meta:
         model = User
         fields = [
-            "id", 
-            "username", 
-            "email", 
+            "id",
+            "username",
+            "email",
             "password",
             "is_employee",
             "is_superuser",
@@ -25,7 +26,7 @@ class UserSerializer(serializers.ModelSerializer):
 
     def create(self, validated_data: dict):
         return User.objects.create_user(**validated_data)
-    
+
     def update(self, instance: User, validated_data: dict):
         if "password" in validated_data:
             password = validated_data.pop("password")
