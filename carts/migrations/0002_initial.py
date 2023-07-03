@@ -10,18 +10,18 @@ class Migration(migrations.Migration):
 
     dependencies = [
         ('products', '0001_initial'),
-        ('orders', '0001_initial'),
+        ('carts', '0001_initial'),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='orderitem',
+            model_name='cartitem',
             name='product',
             field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='products.product'),
         ),
         migrations.AddField(
-            model_name='order',
+            model_name='cart',
             name='products',
-            field=models.ManyToManyField(related_name='orders', through='orders.OrderItem', to='products.product'),
+            field=models.ManyToManyField(related_name='cart', through='carts.CartItem', to='products.product'),
         ),
     ]

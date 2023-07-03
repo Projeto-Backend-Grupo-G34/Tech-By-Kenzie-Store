@@ -1,27 +1,21 @@
 from django.db import models
-from carts.models import Cart
-from orders.models import Order
+
 from users.models import User
 
 
+class CategoryChoices(models.TextChoices):
+    XBOX = "XBOX"
+    PLAYSTATION = "PLAYSTATION"
+    PC = "PC"
+    DEFAULT = "INDEFINIDO"
+
+
 class Product(models.Model):
-    name = models.CharField(max_length=25)
-    quantity = models.IntegerField()
-    price = models.IntegerField()
-    category = models.CharField(max_length=50)
-
-    user = models.ForeignKey(
-        User,
-        on_delete=models.PROTECT,
-        related_name="product"
+    name = models.CharField(max_length=255)
+    category = models.CharField(
+        max_length=12, choices=CategoryChoices.choices, default=CategoryChoices.DEFAULT
     )
-
-    orders = models.ManyToManyField(
-        Order,
-        related_name="product",
-    )
-
-    carts = models.ManyToManyField(
-        Cart,
-        related_name="product",
-    )
+    description = models.TextField(null=True, blank=True)
+    price = models.DecimalField(max_digits=10, decimal_places=2)
+    stock = models.IntegerField()
+    vendor = models.ForeignKey(User, on_delete=models.CASCADE, related_name="products")
