@@ -14,10 +14,12 @@ class User(AbstractUser):
         Address,
         on_delete=models.CASCADE,
         related_name="user",
+        null=True
     )
 
     cart = models.OneToOneField(
         Cart,
         on_delete=models.PROTECT,
-        related_name="user"
+        related_name="user",
+        null=True
     )
