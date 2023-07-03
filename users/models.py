@@ -1,7 +1,7 @@
-from django.db import models
 from django.contrib.auth.models import AbstractUser
+from django.db import models
+
 from addresses.models import Address
-from carts.models import Cart
 
 
 class User(AbstractUser):
@@ -14,10 +14,4 @@ class User(AbstractUser):
         Address,
         on_delete=models.CASCADE,
         related_name="user",
-    )
-
-    cart = models.OneToOneField(
-        Cart,
-        on_delete=models.PROTECT,
-        related_name="user"
     )
