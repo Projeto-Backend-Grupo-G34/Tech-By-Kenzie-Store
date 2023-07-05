@@ -1,4 +1,5 @@
 from rest_framework import serializers
+
 from addresses.models import Address
 
 
@@ -9,6 +10,7 @@ class AddressSerializer(serializers.ModelSerializer):
             "id",
             "street",
             "number",
+            "zip_code",
         ]
 
     def create(self, validated_data: dict):
