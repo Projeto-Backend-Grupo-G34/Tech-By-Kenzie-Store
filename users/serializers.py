@@ -14,6 +14,7 @@ class UserSerializer(serializers.ModelSerializer):
         fields = [
             "username",
             "email",
+            "cpf",
             "password",
             "is_employee",
             "is_superuser",
