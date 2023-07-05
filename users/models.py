@@ -1,5 +1,6 @@
 from django.contrib.auth.models import AbstractUser
 from django.db import models
+
 from addresses.models import Address
 
 
@@ -14,4 +15,5 @@ class User(AbstractUser):
         Address,
         on_delete=models.CASCADE,
         related_name="user",
+        null=True,
     )
