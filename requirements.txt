@@ -5,6 +5,7 @@ colorama==0.4.6
 decorator==5.1.1
 Django==4.2.2
 djangorestframework==3.14.0
+djangorestframework-simplejwt==5.2.2
 executing==1.2.0
 ipython==8.14.0
 jedi==0.18.2
@@ -15,6 +16,7 @@ prompt-toolkit==3.0.38
 psycopg2-binary==2.9.6
 pure-eval==0.2.2
 Pygments==2.15.1
+PyJWT==2.7.0
 python-dotenv==1.0.0
 pytz==2023.3
 six==1.16.0
