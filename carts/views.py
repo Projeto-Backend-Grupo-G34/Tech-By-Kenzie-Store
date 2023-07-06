@@ -3,8 +3,10 @@ from rest_framework.views import APIView, Request, Response, status
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.generics import CreateAPIView, RetrieveAPIView, UpdateAPIView
 from carts.models import Cart
-from carts.serializers import CartSerializer
+from carts.serializers import CartItemSerializer, CartSerializer
+from products.models import Product
 from users.models import User
+from rest_framework.exceptions import NotFound
 
 
 class CartView(RetrieveAPIView):
@@ -33,7 +35,15 @@ class CartAddView(CreateAPIView):
     def perform_create(self, serializer):
         user_id = self.kwargs.get("user_id")
         user = get_object_or_404(User, id=user_id)
-        serializer.save(user=user)
+
+        product_name = self.request.data.get("product")
+
+        try:
+            product = Product.objects.get(name=product_name)
+        except Product.DoesNotExist:
+            raise NotFound(detail="Product not found")
+
+        serializer.save(user=user, product=product)
 
 
 class CartCheckoutView(UpdateAPIView):
