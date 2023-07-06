@@ -10,9 +10,11 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/4.2/ref/settings/
 """
 import os
-from pathlib import Path
-import dotenv
 from datetime import timedelta
+from pathlib import Path
+from datetime import timedelta
+
+import dotenv
 
 dotenv.load_dotenv()
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -115,6 +117,10 @@ AUTH_PASSWORD_VALIDATORS = [
         "NAME": "django.contrib.auth.password_validation.NumericPasswordValidator",
     },
 ]
+
+SIMPLE_JWT = {
+    "ACCESS_TOKEN_LIFETIME": timedelta(days=1),
+}
 
 
 # Internationalization
