@@ -1,10 +1,13 @@
 from django.shortcuts import get_object_or_404
-from rest_framework.views import APIView, Request, Response, status
-from rest_framework.permissions import IsAuthenticated
 from rest_framework.generics import CreateAPIView, RetrieveAPIView, UpdateAPIView
+from rest_framework.permissions import IsAuthenticated
+from rest_framework.views import APIView, Request, Response, status
+from rest_framework_simplejwt.authentication import JWTAuthentication
+
 from carts.models import Cart
-from carts.serializers import CartSerializer
+from carts.serializers import CartItemSerializer, CartSerializer
 from users.models import User
+from users.permissions import IsOwnerOrAdmin
 
 
 class CartView(RetrieveAPIView):
@@ -23,17 +26,9 @@ class CartView(RetrieveAPIView):
 
 
 class CartAddView(CreateAPIView):
-    serializer_class = CartSerializer
-    permission_classes = [IsAuthenticated]
-
-    def get_queryset(self):
-        user_id = self.kwargs.get("user_id")
-        return Cart.objects.filter(user_id=user_id)
-
-    def perform_create(self, serializer):
-        user_id = self.kwargs.get("user_id")
-        user = get_object_or_404(User, id=user_id)
-        serializer.save(user=user)
+    authentication_classes = [JWTAuthentication]
+    serializer_class = CartItemSerializer
+    permission_classes = [IsOwnerOrAdmin]
 
 
 class CartCheckoutView(UpdateAPIView):
