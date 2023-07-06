@@ -1,16 +1,37 @@
 from rest_framework import serializers
+
 from products.models import Product
 from products.serializers import ProductSerializer
 from users.serializers import UserSerializer
+
 from .models import Cart, CartItem
 
 
 class CartItemSerializer(serializers.ModelSerializer):
-    product = ProductSerializer()
-
     class Meta:
         model = CartItem
         fields = ["product", "quantity"]
+
+    def create(self, validated_data: dict):
+        user = self.context["request"].user
+        product = validated_data["product"]
+        quantity = validated_data["quantity"]
+
+        if quantity > product.stock:
+            raise serializers.ValidationError("Quantity is greater than stock")
+        elif product.stock == 0:
+            raise serializers.ValidationError("Product is out of stock")
+
+        product.stock = product.stock - quantity
+        product.save()
+
+        cart, created = Cart.objects.get_or_create(user=user)
+        cart_item, created = CartItem.objects.get_or_create(
+            cart=cart, product=product, quantity=quantity
+        )
+        cart_item.save()
+
+        return cart_item
 
 
 class CartSerializer(serializers.ModelSerializer):
