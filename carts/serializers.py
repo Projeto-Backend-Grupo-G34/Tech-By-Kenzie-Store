@@ -1,3 +1,4 @@
+from django.db.models import F
 from rest_framework import serializers
 
 from products.models import Product
@@ -17,10 +18,12 @@ class CartItemSerializer(serializers.ModelSerializer):
         product = validated_data["product"]
         quantity = validated_data["quantity"]
 
-        if quantity > product.stock:
-            raise serializers.ValidationError("Quantity is greater than stock")
-        elif product.stock == 0:
+        if user.is_anonymous:
+            raise serializers.ValidationError("User is not logged in")
+        if product.stock == 0:
             raise serializers.ValidationError("Product is out of stock")
+        elif quantity > product.stock:
+            raise serializers.ValidationError("Quantity is greater than stock")
 
         product.stock = product.stock - quantity
         product.save()
@@ -29,7 +32,10 @@ class CartItemSerializer(serializers.ModelSerializer):
         cart_item, created = CartItem.objects.get_or_create(
             cart=cart, product=product, quantity=quantity
         )
-        cart_item.save()
+        if not created:
+            CartItem.objects.filter(cart=cart, product=product).update(
+                quantity=F("quantity") + quantity
+            )
 
         return cart_item
 
