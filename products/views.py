@@ -1,7 +1,7 @@
 from rest_framework.generics import ListCreateAPIView, RetrieveUpdateDestroyAPIView
 from rest_framework_simplejwt.authentication import JWTAuthentication
 
-from users.permissions import IsVendorOrAdminForPost
+from users.permissions import IsOwnerOrAdmin, IsVendorOrAdminForPost, IsVendorOrAdmin
 
 from .models import Product
 from .serializers import ProductSerializer
@@ -17,7 +17,7 @@ class ProductView(ListCreateAPIView):
 
 class ProductDetailView(RetrieveUpdateDestroyAPIView):
     authentication_classes = [JWTAuthentication]
-    permission_classes = []
+    permission_classes = [IsOwnerOrAdmin]
 
     queryset = Product.objects.all()
     serializer_class = ProductSerializer
