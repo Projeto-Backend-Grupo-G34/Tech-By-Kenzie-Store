@@ -1,6 +1,7 @@
 from django.db.models import F
 from rest_framework import serializers
 
+from orders.models import Order, OrderItem
 from products.models import Product
 from products.serializers import ProductSerializer
 from users.serializers import UserSerializer
@@ -70,3 +71,47 @@ class CartSerializer(serializers.ModelSerializer):
 
     def retrieve(self, instance):
         return instance
+
+
+class CartCheckoutSerializer(serializers.Serializer):
+    def create(self, validated_data):
+        user = self.context["request"].user
+
+        if not user.is_authenticated:
+            raise serializers.ValidationError("Usuário não autenticado")
+
+        try:
+            cart = Cart.objects.get(user=user)
+        except Cart.DoesNotExist:
+            raise serializers.ValidationError("Carrinho vazio")
+
+        if cart.cart_items.count() == 0:
+            raise serializers.ValidationError("Carrinho vazio")
+
+        vendors = set([item.product.vendor for item in cart.cart_items.all()])
+        if len(vendors) > 1:
+            orders = []
+            for vendor in vendors:
+                order = Order.objects.create(user=user)
+                order_items = cart.cart_items.filter(product__vendor=vendor)
+                for item in order_items:
+                    OrderItem.objects.create(
+                        order=order,
+                        product=item.product,
+                        quantity=item.quantity,
+                        price=item.product.price,
+                    )
+                orders.append(order)
+            cart.cart_items.all().delete()
+            return orders
+        else:
+            order = Order.objects.create(user=user)
+            for item in cart.cart_items.all():
+                OrderItem.objects.create(
+                    order=order,
+                    product=item.product,
+                    quantity=item.quantity,
+                    price=item.product.price,
+                )
+            cart.cart_items.all().delete()
+            return order

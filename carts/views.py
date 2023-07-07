@@ -1,15 +1,19 @@
 from django.shortcuts import get_object_or_404
+from rest_framework import status
 from rest_framework.exceptions import NotFound
 from rest_framework.generics import CreateAPIView, RetrieveAPIView, UpdateAPIView
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.views import APIView, Request, Response, status
 from rest_framework_simplejwt.authentication import JWTAuthentication
 
-from carts.models import Cart
-from carts.serializers import CartItemSerializer, CartSerializer
+from carts.serializers import CartCheckoutSerializer, CartItemSerializer, CartSerializer
+from orders.models import Order, OrderItem
+from orders.serializers import OrderSerializer
 from products.models import Product
 from users.models import User
 from users.permissions import IsOwnerOrAdmin
+
+from .models import Cart, CartItem
 
 
 class CartView(RetrieveAPIView):
@@ -33,23 +37,13 @@ class CartAddView(CreateAPIView):
     permission_classes = [IsOwnerOrAdmin]
 
 
-class CartCheckoutView(UpdateAPIView):
-    serializer_class = CartSerializer
-    permission_classes = [IsAuthenticated]
+class CartCheckoutView(CreateAPIView):
+    serializer_class = CartCheckoutSerializer
 
-    def get_queryset(self):
-        user_id = self.kwargs["user_id"]
-        return Cart.objects.filter(user_id=user_id)
+    def get_serializer_context(self):
+        context = super().get_serializer_context()
+        context["request"] = self.request
+        return context
 
-    def get_object(self):
-        queryset = self.get_queryset()
-        obj = get_object_or_404(queryset)
-        self.check_object_permissions(self.request, obj)
-        return obj
-
-    def update(self, request, *args, **kwargs):
-        cart = self.get_object()
-        cart.is_checked_out = True
-        cart.save()
-        serializer = self.get_serializer(cart)
-        return Response(serializer.data)
+    def perform_create(self, serializer):
+        return serializer.save()

@@ -14,7 +14,7 @@ class Order(models.Model):
     status = models.CharField(
         max_length=50,
         choices=Status.choices,
-        default=Status.EM_ANDAMENTO,
+        default=Status.PEDIDO_REALIZADO,
     )
     created_at = models.DateTimeField(auto_now_add=True)
 
