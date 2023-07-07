@@ -21,28 +21,13 @@ class OrderSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Order
-        fields = ["status", "created_at", "user", "items"]
 
-    def update(self, instance: Order, validated_data: dict) -> Order:
-        new_status = validated_data.get("status")
+        fields = ["id", "status", "created_at", "user", "items"]
 
-        if new_status == instance.status:
-            return instance
-
-        if instance.status == Order.Status.ENTREGUE:
-            raise serializers.ValidationError("Pedido entregue")
-
-        if (
-            instance.status == Order.Status.EM_ANDAMENTO
-            and new_status == Order.Status.PEDIDO_REALIZADO
-        ):
-            instance.status = new_status
-        elif (
-            instance.status == Order.Status.PEDIDO_REALIZADO
-            and new_status == Order.Status.ENTREGUE
-        ):
-            instance.status = new_status
-
+    def update(self, instance, validated_data):
+        status = validated_data.get("status")
+        if status:
+            instance.status = status
         instance.save()
 
         send_mail(

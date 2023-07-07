@@ -5,13 +5,13 @@ from rest_framework_simplejwt.authentication import JWTAuthentication
 
 from orders.models import Order
 from orders.serializers import OrderSerializer
-from users.permissions import IsSellerOrAdmin, IsVendorOrAdmin
+from users.permissions import IsVendorOrAdmin
 
 
 class OrderView(ListAPIView):
     authentication_classes = [JWTAuthentication]
     serializer_class = OrderSerializer
-    permission_classes = [IsSellerOrAdmin]
+    permission_classes = [IsVendorOrAdmin]
 
     def get_queryset(self):
         user = self.request.user
@@ -26,5 +26,5 @@ class OrderDetailView(RetrieveUpdateDestroyAPIView):
     queryset = Order.objects.all()
     serializer_class = OrderSerializer
 
-    def put(self, request, *args, **kwargs):
+    def patch(self, request, *args, **kwargs):
         return self.update(request, *args, **kwargs)
