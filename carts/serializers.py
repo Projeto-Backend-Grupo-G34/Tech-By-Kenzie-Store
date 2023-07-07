@@ -1,3 +1,5 @@
+from django.conf import settings
+from django.core.mail import send_mail
 from django.db.models import F
 from rest_framework import serializers
 
@@ -5,8 +7,7 @@ from orders.models import Order, OrderItem
 from products.models import Product
 from products.serializers import ProductSerializer
 from users.serializers import UserSerializer
-from django.core.mail import send_mail
-from django.conf import settings
+
 from .models import Cart, CartItem
 
 
@@ -108,7 +109,7 @@ class CartCheckoutSerializer(serializers.Serializer):
             for order in orders:
                 send_mail(
                     subject="Pedido - Tech By Kenzie",
-                    message="Seu pedido está em andamento",
+                    message="Seu pedido foi realizado.",
                     from_email=settings.EMAIL_HOST_USER,
                     recipient_list=[user.email],
                     fail_silently=False,
@@ -128,7 +129,7 @@ class CartCheckoutSerializer(serializers.Serializer):
 
             send_mail(
                 subject="Pedido - Tech By Kenzie",
-                message="Seu pedido está em andamento",
+                message="Seu pedido foi realizado.",
                 from_email=settings.EMAIL_HOST_USER,
                 recipient_list=[user.email],
                 fail_silently=False,
