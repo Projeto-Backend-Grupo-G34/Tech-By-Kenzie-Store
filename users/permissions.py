@@ -1,7 +1,8 @@
 from rest_framework import permissions
 from rest_framework.views import Request, View
-from users.models import User
+
 from addresses.models import Address
+from users.models import User
 
 
 class IsOwnerOrAdmin(permissions.BasePermission):
@@ -29,6 +30,12 @@ class IsVendorOrAdmin(permissions.BasePermission):
         ):
             return True
         return False
+
+
+class IsSellerOrAdmin(permissions.BasePermission):
+    def has_permission(self, request, view):
+        user = request.user
+        return user.is_authenticated and (user.is_employee or user.is_superuser)
 
 
 class IsVendorOrAdminForPost(permissions.BasePermission):
