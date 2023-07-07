@@ -3,6 +3,7 @@ from rest_framework.generics import RetrieveUpdateDestroyAPIView
 from rest_framework_simplejwt.authentication import JWTAuthentication
 from orders.models import Order
 from orders.serializers import OrderSerializer
+from users.permissions import IsVendorOrAdmin
 
 
 class OrderView(APIView):
@@ -11,7 +12,7 @@ class OrderView(APIView):
 
 class OrderDetailView(RetrieveUpdateDestroyAPIView):
     authentication_classes = [JWTAuthentication]
-    permission_classes = []
+    permission_classes = [IsOwnerOrAdmin]
     queryset = Order.objects.all()
     serializer_class = OrderSerializer
 
