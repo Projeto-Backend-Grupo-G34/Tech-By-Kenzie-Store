@@ -24,18 +24,19 @@ class IsInstanceOrAdmin(permissions.BasePermission):
 
 
 class IsVendorOrAdmin(permissions.BasePermission):
-    def has_permission(self, request: Request, view: View, obj: User):
-        if request.user.is_authenticated and (
-            request.user.is_employee or request.user.is_superuser
-        ):
-            return True
+    def has_object_permission(self, request, view, obj):
+        if request.user.is_authenticated:
+            if request.user.is_superuser:
+                return True
+            elif obj.products.filter(vendor=request.user.id).exists():
+                return True
         return False
 
 
-class IsSellerOrAdmin(permissions.BasePermission):
-    def has_permission(self, request, view):
-        user = request.user
-        return user.is_authenticated and (user.is_employee or user.is_superuser)
+# class IsSellerOrAdmin(permissions.BasePermission):
+#     def has_permission(self, request, view):
+#         user = request.user
+#         return user.is_authenticated and (user.is_employee or user.is_superuser)
 
 
 class IsVendorOrAdminForPost(permissions.BasePermission):
