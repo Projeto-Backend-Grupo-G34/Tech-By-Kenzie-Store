@@ -6,6 +6,7 @@ from orders.models import Order, OrderItem
 from products.models import Product
 from users.serializers import UserSerializer
 from .models import Cart, CartItem
+from rest_framework.exceptions import NotFound
 
 
 class CartItemSerializer(serializers.ModelSerializer):
@@ -70,6 +71,17 @@ class CartSerializer(serializers.ModelSerializer):
 
     def retrieve(self, instance):
         return instance
+
+    def get_object_or_404(self):
+        user_id = self.context["request"].user.id
+        queryset = Cart.objects.filter(user_id=user_id)
+        if not queryset.exists():
+            raise NotFound("Cart not found.")
+        return queryset.first()
+
+    def get(self):
+        instance = self.get_object_or_404()
+        return self.to_representation(instance)
 
 
 class CartCheckoutSerializer(serializers.Serializer):

@@ -8,11 +8,12 @@ from .models import Cart
 
 
 class CartView(RetrieveAPIView):
+    authentication_classes = [JWTAuthentication]
     serializer_class = CartSerializer
     permission_classes = [IsAuthenticated]
 
     def get_queryset(self):
-        user_id = self.kwargs["user_id"]
+        user_id = self.request.user.id
         return Cart.objects.filter(user_id=user_id)
 
     def get_object(self):
