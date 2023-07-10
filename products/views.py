@@ -1,7 +1,7 @@
 from rest_framework.generics import ListCreateAPIView, RetrieveUpdateDestroyAPIView
 from rest_framework_simplejwt.authentication import JWTAuthentication
 
-from users.permissions import IsOwnerOrAdmin, IsVendorOrAdminForPost, IsVendorOrAdmin
+from users.permissions import IsOwnerOrAdmin, IsVendorOrAdmin, IsVendorOrAdminForPost
 
 from .models import Product
 from .serializers import ProductSerializer
