@@ -2,12 +2,9 @@ from django.conf import settings
 from django.core.mail import send_mail
 from django.db.models import F
 from rest_framework import serializers
-
 from orders.models import Order, OrderItem
 from products.models import Product
-from products.serializers import ProductSerializer
 from users.serializers import UserSerializer
-
 from .models import Cart, CartItem
 
 

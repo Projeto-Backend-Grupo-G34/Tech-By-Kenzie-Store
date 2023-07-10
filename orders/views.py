@@ -1,8 +1,5 @@
 from rest_framework.generics import ListAPIView, RetrieveUpdateDestroyAPIView
-from rest_framework.permissions import IsAuthenticated
-from rest_framework.views import APIView, Request, Response, status
 from rest_framework_simplejwt.authentication import JWTAuthentication
-
 from orders.models import Order
 from orders.serializers import OrderSerializer
 from users.permissions import IsVendorOrAdmin

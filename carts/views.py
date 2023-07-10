@@ -1,19 +1,10 @@
 from django.shortcuts import get_object_or_404
-from rest_framework import status
-from rest_framework.exceptions import NotFound
-from rest_framework.generics import CreateAPIView, RetrieveAPIView, UpdateAPIView
+from rest_framework.generics import CreateAPIView, RetrieveAPIView
 from rest_framework.permissions import IsAuthenticated
-from rest_framework.views import APIView, Request, Response, status
 from rest_framework_simplejwt.authentication import JWTAuthentication
-
 from carts.serializers import CartCheckoutSerializer, CartItemSerializer, CartSerializer
-from orders.models import Order, OrderItem
-from orders.serializers import OrderSerializer
-from products.models import Product
-from users.models import User
 from users.permissions import IsOwnerOrAdmin
-
-from .models import Cart, CartItem
+from .models import Cart
 
 
 class CartView(RetrieveAPIView):

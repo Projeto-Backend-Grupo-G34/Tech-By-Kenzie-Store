@@ -3,7 +3,7 @@ asttokens==2.2.1
 backcall==0.2.0
 colorama==0.4.6
 decorator==5.1.1
-Django==4.2.2
+Django==4.2.3
 djangorestframework==3.14.0
 djangorestframework-simplejwt==5.2.2
 executing==1.2.0

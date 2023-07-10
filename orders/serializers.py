@@ -1,5 +1,4 @@
 from rest_framework import serializers
-
 from products.serializers import ProductSerializer
 from users.serializers import UserSerializer
 from django.core.mail import send_mail
