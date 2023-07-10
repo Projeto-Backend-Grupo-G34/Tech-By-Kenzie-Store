@@ -10,13 +10,13 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/4.2/ref/settings/
 """
 
-from django.core.management.utils import get_random_secret_key
+import os
 from datetime import timedelta
 from pathlib import Path
-import os
+
 import dj_database_url
 import dotenv
-
+from django.core.management.utils import get_random_secret_key
 
 dotenv.load_dotenv()
 
@@ -54,6 +54,7 @@ INSTALLED_APPS = [
     "addresses",
     "carts",
     "rest_framework",
+    "drf_spectacular",
 ]
 
 MIDDLEWARE = [
@@ -170,6 +171,9 @@ REST_FRAMEWORK = {
     "DEFAULT_AUTHENTICATION_CLASSES": [
         "rest_framework_simplejwt.authentication.JWTAuthentication",
     ],
+    "DEFAULT_SCHEMA_CLASS": "drf_spectacular.openapi.AutoSchema",
+    "DEFAULT_PAGINATION_CLASS": "rest_framework.pagination.PageNumberPagination",
+    "PAGE_SIZE": 5,
 }
 
 EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
@@ -178,3 +182,10 @@ EMAIL_HOST = os.getenv("EMAIL_HOST")
 EMAIL_PORT = os.getenv("EMAIL_PORT")
 EMAIL_HOST_USER = os.getenv("EMAIL_HOST_USER")
 EMAIL_HOST_PASSWORD = os.getenv("EMAIL_HOST_PASSWORD")
+
+SPECTACULAR_SETTINGS = {
+    "TITLE": "Tech by Kenzie Store",
+    "DESCRIPTION": "Este projeto é uma API para suportar uma plataforma de e-commerce chamada Tech by Kenzie Store. A plataforma permite que usuários realizem compras, adicionem produtos ao carrinho, finalizem pedidos e muito mais.",
+    "VERSION": "1.0.0",
+    "SERVE_INCLUDE_SCHEMA": False,
+}
