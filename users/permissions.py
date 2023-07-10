@@ -33,12 +33,6 @@ class IsVendorOrAdmin(permissions.BasePermission):
         return False
 
 
-# class IsSellerOrAdmin(permissions.BasePermission):
-#     def has_permission(self, request, view):
-#         user = request.user
-#         return user.is_authenticated and (user.is_employee or user.is_superuser)
-
-
 class IsVendorOrAdminForPost(permissions.BasePermission):
     def has_permission(self, request: Request, view: View):
         if request.method == "POST" and (
