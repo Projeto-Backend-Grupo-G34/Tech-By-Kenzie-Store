@@ -78,10 +78,11 @@ class CartSerializer(serializers.ModelSerializer):
         if not queryset.exists():
             raise NotFound("Cart not found.")
         return queryset.first()
-
-    def get(self):
+    
+    def get(self, request, *args, **kwargs):
         instance = self.get_object_or_404()
-        return self.to_representation(instance)
+        serializer = self.retrieve(instance)
+        return serializer
 
 
 class CartCheckoutSerializer(serializers.Serializer):
