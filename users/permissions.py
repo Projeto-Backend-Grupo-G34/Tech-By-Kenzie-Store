@@ -35,10 +35,10 @@ class IsVendorOrAdmin(permissions.BasePermission):
 
 class IsVendorOrAdminForPost(permissions.BasePermission):
     def has_permission(self, request: Request, view: View):
-        if request.method == "POST" and (
-            request.user.is_employee or request.user.is_superuser
+        if (
+            request.method == "POST"
+            and (request.user.is_employee or request.user.is_superuser)
+            or request.method == "GET"
         ):
-            return True
-        elif request.method == "GET":
             return True
         return False
