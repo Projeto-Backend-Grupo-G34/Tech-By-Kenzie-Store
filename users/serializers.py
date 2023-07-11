@@ -22,7 +22,11 @@ class UserSerializer(serializers.ModelSerializer):
         extra_kwargs = {"password": {"write_only": True}}
 
     def create(self, validated_data: dict):
-        return User.objects.create_user(**validated_data)
+        is_superuser: bool = validated_data.get("is_superuser")
+        if is_superuser == True:
+            return User.objects.create_superuser(**validated_data)
+        else:
+            return User.objects.create_user(**validated_data)
 
     def update(self, instance: User, validated_data: dict):
         if "password" in validated_data:
