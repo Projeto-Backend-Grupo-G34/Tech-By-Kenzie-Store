@@ -1,9 +1,11 @@
+from drf_spectacular.utils import extend_schema
 from rest_framework.generics import ListCreateAPIView, RetrieveUpdateDestroyAPIView
 from rest_framework_simplejwt.authentication import JWTAuthentication
+
 from users.permissions import IsOwnerOrAdmin, IsVendorOrAdminForPost
+
 from .models import Product
 from .serializers import ProductSerializer
-from drf_spectacular.utils import extend_schema
 
 
 class ProductView(ListCreateAPIView):
@@ -12,6 +14,7 @@ class ProductView(ListCreateAPIView):
 
     queryset = Product.objects.all()
     serializer_class = ProductSerializer
+    filterset_fields = ["category", "name", "id"]
 
     @extend_schema(
         operation_id="product_list",
