@@ -2,17 +2,21 @@ from django.conf import settings
 from django.core.mail import send_mail
 from django.db.models import F
 from rest_framework import serializers
+from rest_framework.exceptions import NotFound
+
 from orders.models import Order, OrderItem
 from products.models import Product
 from users.serializers import UserSerializer
+
 from .models import Cart, CartItem
-from rest_framework.exceptions import NotFound
 
 
 class CartItemSerializer(serializers.ModelSerializer):
+    product_name = serializers.ReadOnlyField(source="product.name")
+
     class Meta:
         model = CartItem
-        fields = ["product", "quantity"]
+        fields = ["product_name", "product", "quantity"]
 
     def create(self, validated_data: dict):
         user = self.context["request"].user
@@ -26,18 +30,22 @@ class CartItemSerializer(serializers.ModelSerializer):
         elif quantity > product.stock:
             raise serializers.ValidationError("Quantity is greater than stock")
 
-        product.stock = product.stock - quantity
-        product.save()
-
         cart, created = Cart.objects.get_or_create(user=user)
-        cart_item, created = CartItem.objects.get_or_create(
-            cart=cart, product=product, quantity=quantity
-        )
-        if not created:
+        cart_item = CartItem.objects.filter(cart=cart, product=product).first()
+        if cart_item:
             CartItem.objects.filter(cart=cart, product=product).update(
                 quantity=F("quantity") + quantity
             )
+            new_quantity = cart_item.quantity + quantity
+            if new_quantity > product.stock:
+                raise serializers.ValidationError("Quantity is greater than stock")
+            cart_item.quantity = new_quantity
+        else:
+            cart_item = CartItem.objects.create(
+                cart=cart, product=product, quantity=quantity
+            )
 
+        product_name = product.name
         return cart_item
 
 
@@ -78,7 +86,7 @@ class CartSerializer(serializers.ModelSerializer):
         if not queryset.exists():
             raise NotFound("Cart not found.")
         return queryset.first()
-    
+
     def get(self, request, *args, **kwargs):
         instance = self.get_object_or_404()
         serializer = self.retrieve(instance)
@@ -107,6 +115,22 @@ class CartCheckoutSerializer(serializers.Serializer):
                 order = Order.objects.create(user=user)
                 order_items = cart.cart_items.filter(product__vendor=vendor)
                 for item in order_items:
+                    product = item.product
+                    product_name = product.name
+                    product_id = product.id
+                    quantity = item.quantity
+
+                    if product.stock == 0:
+                        raise serializers.ValidationError(
+                            f"{product_name} (id: {product_id}) is out of stock"
+                        )
+                    elif quantity > product.stock:
+                        raise serializers.ValidationError(
+                            f"Quantity of {product_name} (id: {product_id}) is greater than stock"
+                        )
+
+                    product.stock = product.stock - quantity
+                    product.save()
                     OrderItem.objects.create(
                         order=order,
                         product=item.product,
@@ -118,7 +142,7 @@ class CartCheckoutSerializer(serializers.Serializer):
 
             for order in orders:
                 send_mail(
-                    subject="Pedido - Tech By Kenzie",
+                    subject="Pedido  - Tech By Kenzie",
                     message="Seu pedido foi realizado.",
                     from_email=settings.EMAIL_HOST_USER,
                     recipient_list=[user.email],
@@ -129,6 +153,17 @@ class CartCheckoutSerializer(serializers.Serializer):
         else:
             order = Order.objects.create(user=user)
             for item in cart.cart_items.all():
+                product = item.product
+                quantity = item.quantity
+
+                if product.stock == 0:
+                    raise serializers.ValidationError("Product is out of stock")
+                elif quantity > product.stock:
+                    raise serializers.ValidationError("Quantity is greater than stock")
+
+                product.stock = product.stock - quantity
+                product.save()
+
                 OrderItem.objects.create(
                     order=order,
                     product=item.product,
@@ -144,5 +179,4 @@ class CartCheckoutSerializer(serializers.Serializer):
                 recipient_list=[user.email],
                 fail_silently=False,
             )
-
             return order
